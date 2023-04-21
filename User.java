@@ -1,6 +1,16 @@
+package ir.ac.kntu;
 public class User extends Person {
     private String Email;
     private String Phone;
+    private int Wallet=0;
+
+    public int getWallet() {
+        return Wallet;
+    }
+
+    public void setWallet(int wallet) {
+        Wallet = wallet;
+    }
 
     public String getEmail() {
         return Email;
