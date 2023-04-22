@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    final private static Admin admin = new Admin("name", "password");
+    final private static Admin admin = new Admin("r", "r");
     private static List<User> UsersList = new ArrayList<>();
     private static List<Game> GameList = new ArrayList<>();
     public static Scanner scanner = new Scanner(System.in);
     private static boolean Admin = false;
 
     public static void main(String[] args) {
+        UsersList.add(new User("r", "Romi123", "4", "5"));
+        GameList.add(new Game("me", "me", "me", 12, 12));
         Enter();
     }
 
@@ -133,6 +135,8 @@ public class Main {
 
     public static void DeleteUser(User user) {
         UsersList.remove(user);
+        System.out.println("User deleted successfully.");
+        UsersPageAdmin();
     }
 
     public static User FindUserByEmail() {
@@ -370,11 +374,17 @@ public class Main {
     public static void Profile(User user) {
         System.out.println("This is your Profile");
         ShowUserInfo(user);
-        System.out.println("1.Change info \t 2.back");
-        if(scanner.nextInt()==1){
-            ChangeUserInfo(user);
-        }else {
-            UserPage(user);
+        System.out.println("1.ChangeInfo \t 2.back");
+        switch (scanner.nextInt()) {
+            case 1:
+                ChangeUserInfo(user);
+                break;
+            case 2:
+                if (Admin) {
+                    UsersPageAdmin();
+                }
+                UserPage(user);
+                break;
         }
     }
 
@@ -385,19 +395,6 @@ public class Main {
         System.out.println("Email: " + user.getEmail());
         System.out.println("PhoneNumber: " + user.getPhone());
         System.out.println("Wallet: " + user.getWallet() + "\n");
-        System.out.println("1.ChangeInfo \t 2.back");
-        switch (scanner.nextInt()) {
-            case 1:
-                ChangeUserInfo(user);
-                break;
-            case 2:
-                if (Admin) {
-                    UsersPageAdmin();
-                }
-
-                Profile(user);
-                break;
-        }
     }
 
     public static void ChangeUserInfo(User user) {
@@ -430,14 +427,14 @@ public class Main {
                 ChangeUserInfo(user);
                 break;
             case 6:
-                ShowUserInfo(user);
+                Profile(user);
                 break;
 
         }
     }
 
     public static void UserPage(User user) {
-        Scanner scanner = new Scanner(System.in);
+        System.out.println("You are in Home Page:");
         System.out.println("1.profile \t 2.store \t 3.library \t 4.friends \t 5.back");
         int page = scanner.nextInt();
         switch (page) {
@@ -445,7 +442,7 @@ public class Main {
                 Profile(user);
                 break;
             case 2:
-                // Store();
+                Store(user);
                 break;
             case 3:
                 // Library();
@@ -457,6 +454,56 @@ public class Main {
                 User();
                 break;
 
+        }
+    }
+
+    public static void Store(User user) {
+        System.out.println("Games available are:");
+        for (int i = 0; i < GameList.size(); i++) {
+            System.out.println(i + 1 + "." + GameList.get(i).getName() + ": " + GameList.get(i).getInfo());
+        }
+        System.out.println("0.back");
+        System.out.println("Chose your game:");
+        int cmd=scanner.nextInt();
+        if (cmd == 0) {
+            UserPage(user);
+        } else {
+            ShowGameInfo(GameList.get(cmd - 1), user);
+        }
+    }
+
+    public static void ShowGameInfo(Game game, User user) {
+        System.out.println("Name: " + game.getName() + "\nDescription: " + game.getInfo() +
+                "\nGenre: " + game.getGenre() + "\nPrice: " + game.getPrice() + "\nRate: " + game.getRate());
+        CheckLibrary(game, user);
+    }
+
+    private static void CheckLibrary(Game game, User user) {
+        if (!user.getLibrary().contains(game)) {
+            System.out.println("1.Buy \t 2.back");
+            if (scanner.nextInt() == 1) {
+                BuyGame(game, user);
+            }
+        } else {
+            System.out.println("1.back");
+            if (scanner.nextInt() == 1) {
+                Store(user);
+            }
+        }
+    }
+
+    private static void BuyGame(Game game, User user) {
+        List<Game> library = user.getLibrary();
+        library.add(game);
+        user.setLibrary(library);
+        if (user.getWallet() - game.getPrice() >= 0) {
+            user.setWallet(user.getWallet() - game.getPrice());
+            System.out.println("Game added to library.\n1.back");
+        } else {
+            System.out.println("You don't have enough money:)\n1.bak");
+        }
+        if (scanner.nextInt() == 1) {
+            Store(user);
         }
     }
 }

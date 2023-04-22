@@ -1,11 +1,24 @@
 package ir.ac.kntu;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class User {
     private String UserName;
     private String Password;
     private String Email;
     private String Phone;
     private int Wallet = 0;
+    private List<Game> library= new ArrayList<Game>();
+
+    public void setLibrary(List<Game> library) {
+        this.library = library;
+    }
+
+    public List<Game> getLibrary() {
+        return library;
+    }
 
     public String getUserName() {
         return UserName;
