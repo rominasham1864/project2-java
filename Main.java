@@ -1,3 +1,4 @@
+
 package ir.ac.kntu;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class Main {
     public static void main(String[] args) {
         Enter();
     }
+
     public static void Enter() {
         System.out.println("Enter your role:");
         System.out.println("1.User \t 2.Admin");
@@ -26,6 +28,7 @@ public class Main {
         }
         sc.close();
     }
+
     public static void User() {
         System.out.println("Chose one:");
         System.out.println("1.Sing in \t 2.Sing up \t 3.Back");
@@ -42,6 +45,7 @@ public class Main {
         }
 
     }
+
     public static void SingIn() {
         System.out.println("Enter you UserName:");
         Scanner scanner = new Scanner(System.in);
@@ -49,6 +53,7 @@ public class Main {
         UserExistence(userName);
         CorrectPass(userName);
     }
+
     public static void SingUp() {
         String name = UserNameCheck();
         String password = UserPasswordCheck();
@@ -62,6 +67,7 @@ public class Main {
         System.out.println("Your info had successfully add to data base, Please Sing in.");
         SingIn();
     }
+
     public static void Admin() {
         System.out.println("Enter you UserName:");
         Scanner scanner = new Scanner(System.in);
@@ -90,6 +96,7 @@ public class Main {
         }
 
     }
+
     public static String UserNameCheck() {
         System.out.println("Enter you UserName:");
         Scanner scanner = new Scanner(System.in);
@@ -102,6 +109,7 @@ public class Main {
         }
         return name;
     }
+
     public static String UserPasswordCheck() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter you Password:(Should include at least 8 chars with Capital and Small letters and Numbers)");
@@ -113,6 +121,7 @@ public class Main {
             return password;
         }
     }
+
     public static void UserExistence(String userName) {
         boolean existence = false;
         Scanner scanner = new Scanner(System.in);
@@ -131,6 +140,7 @@ public class Main {
             }
         }
     }
+
     public static void CorrectPass(String userName) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter you Password:");
@@ -139,7 +149,7 @@ public class Main {
         for (User user : UsersList) {
             if (user.getUserName().equals(userName) && user.getPassword().equals(password)) {
                 System.out.println("You have Entered, Welcome " + userName + "!");
-                UserPage();
+                UserPage(user);
                 done = true;
                 break;
             }
@@ -154,17 +164,82 @@ public class Main {
             }
         }
     }
-    public static void Profile(){
+
+    public static void Profile(User user) {
         System.out.println("This is your Profile");
-        System.out.println("1.ShowInfo \t 2.");
+        System.out.println("1.ShowInfo \t 2.back");
+        Scanner scanner = new Scanner(System.in);
+        int cmd = scanner.nextInt();
+        switch (cmd) {
+            case 1:
+                ShowInfo(user);
+                break;
+            case 2:
+                Profile(user);
+                break;
+        }
     }
-    public static void UserPage() {
+    public static void ShowInfo(User user){
+        Scanner scanner= new Scanner(System.in);
+        System.out.println("User Information");
+        System.out.println("UserName: "+user.getUserName());
+        System.out.println("Password: "+user.getPassword());
+        System.out.println("Email: "+user.getEmail());
+        System.out.println("PhoneNumber: "+user.getPhone());
+        System.out.println("Wallet: "+user.getWallet()+"\n");
+        System.out.println("1.ChangeInfo \t 2.back");
+        switch (scanner.nextInt()){
+            case 1:
+                ChangeInfo(user);
+                break;
+            case 2:
+                Profile(user);
+                break;
+        }
+    }
+    public static void ChangeInfo(User user){
+        Scanner scanner= new Scanner(System.in);
+        System.out.println("Witch data you wish to change?");
+        System.out.println("1.UserName \t 2.Password \t 3.Email \t 4.PhoneNumber \t 5.Wallet \t 6.back");
+        switch (scanner.nextInt()){
+            case 1:
+                System.out.println("Enter new UserName:");
+                user.setUserName(scanner.nextLine());
+                ChangeInfo(user);
+                break;
+            case 2:
+                System.out.println("Enter new Password:");
+                user.setPassword(scanner.nextLine());
+                ChangeInfo(user);
+                break;
+            case 3:
+                System.out.println("Enter new Email:");
+                user.setEmail(scanner.nextLine());
+                ChangeInfo(user);
+                break;
+            case 4:
+                System.out.println("Enter new PhoneNumber:");
+                user.setPhone(scanner.nextLine());
+                ChangeInfo(user);
+                break;
+            case 5:
+                System.out.println("Wallet charging:");
+                user.setWallet(scanner.nextInt());
+                ChangeInfo(user);
+                break;
+            case 6:
+                ShowInfo(user);
+                break;
+
+        }
+    }
+    public static void UserPage(User user) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("1.profile \t 2.store \t 3.library \t 4.friends \t 5.back");
         int page = scanner.nextInt();
         switch (page) {
             case 1:
-                Profile();
+                Profile(user);
                 break;
             case 2:
                 //Store();
@@ -181,6 +256,4 @@ public class Main {
 
         }
     }
-
-
 }
