@@ -1,6 +1,7 @@
 
 package ir.ac.kntu;
 
+import java.awt.font.GlyphMetrics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -8,6 +9,7 @@ import java.util.Scanner;
 public class Main {
     final private static Admin admin = new Admin("name", "password");
     private static List<User> UsersList = new ArrayList<>();
+    private static List<Game> GameList = new ArrayList<>();
 
     public static void main(String[] args) {
         Enter();
@@ -78,13 +80,12 @@ public class Main {
             System.out.println("Welcome " + admin.getUserName() + "!");
             System.out.println("Chose your action:");
             System.out.println("1.users \t 2.games \t 3.back");
-            int action = scanner.nextInt();
-            switch (action) {
+            switch (scanner.nextInt()) {
                 case 1:
                     //UsersPage();
                     break;
                 case 2:
-                    //GamesPage();
+                    GamesPage();
                     break;
                 case 3:
                     Enter();
@@ -95,6 +96,97 @@ public class Main {
             Admin();
         }
 
+    }
+
+    public static void GamesPage() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Chose your action:");
+        System.out.println("1.new game \t 2.change game info \t 3.delete game");
+        switch (scanner.nextInt()) {
+            case 1:
+                AddNewGame();
+                break;
+            case 2:
+                FindGame();
+                break;
+            case 3:
+                //DeleteGame();
+                break;
+            case 4:
+                Admin();
+                break;
+        }
+        for (Game game : GameList) {
+            System.out.println("");
+        }
+    }
+
+    private static void FindGame() {
+        List<Game> games = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter game name:");
+        String gameName = scanner.nextLine();
+        for (Game game : GameList) {
+            if (gameName.equals(game.getName())) {
+                games.add(game);
+            }
+        }
+        System.out.println("Games found:");
+        for (int i = 1; i <= games.size(); i++) {
+            System.out.println(i + "." + games.get(i));
+        }
+        System.out.println("Witch one you wish to change?(Enter the number)");
+        int num = scanner.nextInt();
+        ChangeGameInfo(games.get(num));
+    }
+
+    public static void ChangeGameInfo(Game game) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Witch Info you wish to change:\n 1.Game name" +
+                " \t 2.Game description \t 3.Game genre \t 4.Game price \t 5.back");
+        switch (scanner.nextInt()) {
+            case 1:
+                System.out.println("Enter new Game name:");
+                game.setName(scanner.nextLine());
+                ChangeGameInfo(game);
+                break;
+            case 2:
+                System.out.println("Enter new Game description:");
+                game.setDescription(scanner.nextLine());
+                ChangeGameInfo(game);
+                break;
+            case 3:
+                System.out.println("Enter new Game genre:");
+                game.setGenre(scanner.nextLine());
+                ChangeGameInfo(game);
+                break;
+            case 4:
+                System.out.println("Enter new Game price:");
+                game.setPrice(scanner.nextInt());
+                ChangeGameInfo(game);
+                break;
+            case 5:
+                GamesPage();
+                break;
+        }
+    }
+
+    public static void AddNewGame() {
+        Game game = new Game();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter new game name:");
+        game.setName(scanner.nextLine());
+        System.out.println("Enter new game Info:");
+        game.setDescription(scanner.nextLine());
+        System.out.println("Enter new game genre:");
+        game.setGenre(scanner.nextLine());
+        System.out.println("Enter new game Price:");
+        game.setPrice(scanner.nextInt());
+        GameList.add(game);
+        System.out.println("Game added successfully!\n 1.back");
+        if (scanner.nextInt() == 1) {
+            GamesPage();
+        }
     }
 
     public static String UserNameCheck() {
@@ -172,67 +264,70 @@ public class Main {
         int cmd = scanner.nextInt();
         switch (cmd) {
             case 1:
-                ShowInfo(user);
+                ShowUserInfo(user);
                 break;
             case 2:
                 Profile(user);
                 break;
         }
     }
-    public static void ShowInfo(User user){
-        Scanner scanner= new Scanner(System.in);
+
+    public static void ShowUserInfo(User user) {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("User Information");
-        System.out.println("UserName: "+user.getUserName());
-        System.out.println("Password: "+user.getPassword());
-        System.out.println("Email: "+user.getEmail());
-        System.out.println("PhoneNumber: "+user.getPhone());
-        System.out.println("Wallet: "+user.getWallet()+"\n");
+        System.out.println("UserName: " + user.getUserName());
+        System.out.println("Password: " + user.getPassword());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("PhoneNumber: " + user.getPhone());
+        System.out.println("Wallet: " + user.getWallet() + "\n");
         System.out.println("1.ChangeInfo \t 2.back");
-        switch (scanner.nextInt()){
+        switch (scanner.nextInt()) {
             case 1:
-                ChangeInfo(user);
+                ChangeUserInfo(user);
                 break;
             case 2:
                 Profile(user);
                 break;
         }
     }
-    public static void ChangeInfo(User user){
-        Scanner scanner= new Scanner(System.in);
+
+    public static void ChangeUserInfo(User user) {
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Witch data you wish to change?");
         System.out.println("1.UserName \t 2.Password \t 3.Email \t 4.PhoneNumber \t 5.Wallet \t 6.back");
-        switch (scanner.nextInt()){
+        switch (scanner.nextInt()) {
             case 1:
                 System.out.println("Enter new UserName:");
                 user.setUserName(scanner.nextLine());
-                ChangeInfo(user);
+                ChangeUserInfo(user);
                 break;
             case 2:
                 System.out.println("Enter new Password:");
                 user.setPassword(scanner.nextLine());
-                ChangeInfo(user);
+                ChangeUserInfo(user);
                 break;
             case 3:
                 System.out.println("Enter new Email:");
                 user.setEmail(scanner.nextLine());
-                ChangeInfo(user);
+                ChangeUserInfo(user);
                 break;
             case 4:
                 System.out.println("Enter new PhoneNumber:");
                 user.setPhone(scanner.nextLine());
-                ChangeInfo(user);
+                ChangeUserInfo(user);
                 break;
             case 5:
                 System.out.println("Wallet charging:");
                 user.setWallet(scanner.nextInt());
-                ChangeInfo(user);
+                ChangeUserInfo(user);
                 break;
             case 6:
-                ShowInfo(user);
+                ShowUserInfo(user);
                 break;
 
         }
     }
+
     public static void UserPage(User user) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("1.profile \t 2.store \t 3.library \t 4.friends \t 5.back");
