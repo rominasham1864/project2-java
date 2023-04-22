@@ -29,7 +29,7 @@ public class Game {
         return Description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription  (String description) {
         Description = description;
     }
 

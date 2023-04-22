@@ -10,7 +10,7 @@ public class Main {
     final private static Admin admin = new Admin("name", "password");
     private static List<User> UsersList = new ArrayList<>();
     private static List<Game> GameList = new ArrayList<>();
-
+    public static Scanner scanner= new Scanner(System.in);
     public static void main(String[] args) {
         Enter();
     }
@@ -18,8 +18,7 @@ public class Main {
     public static void Enter() {
         System.out.println("Enter your role:");
         System.out.println("1.User \t 2.Admin");
-        Scanner sc = new Scanner(System.in);
-        int role = sc.nextInt();
+        int role = scanner.nextInt();
         switch (role) {
             case 1 -> User();
             case 2 -> Admin();
@@ -28,13 +27,12 @@ public class Main {
                 Enter();
             }
         }
-        sc.close();
+        scanner.close();
     }
 
     public static void User() {
         System.out.println("Chose one:");
         System.out.println("1.Sing in \t 2.Sing up \t 3.Back");
-        Scanner scanner = new Scanner(System.in);
         int enter = scanner.nextInt();
         switch (enter) {
             case 1 -> SingIn();
@@ -50,8 +48,7 @@ public class Main {
 
     public static void SingIn() {
         System.out.println("Enter you UserName:");
-        Scanner scanner = new Scanner(System.in);
-        String userName = scanner.nextLine();
+        String userName = scanner.next();
         UserExistence(userName);
         CorrectPass(userName);
     }
@@ -59,11 +56,10 @@ public class Main {
     public static void SingUp() {
         String name = UserNameCheck();
         String password = UserPasswordCheck();
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter you Email Address:");
-        String email = scanner.nextLine();
+        String email = scanner.next();
         System.out.println("Enter you Phone Number:");
-        String phone = scanner.nextLine();
+        String phone = scanner.next();
         User user = new User(name, password, email, phone);
         UsersList.add(user);
         System.out.println("Your info had successfully add to data base, Please Sing in.");
@@ -72,17 +68,16 @@ public class Main {
 
     public static void Admin() {
         System.out.println("Enter you UserName:");
-        Scanner scanner = new Scanner(System.in);
-        String userName = scanner.nextLine();
+        String userName = scanner.next();
         System.out.println("Enter you Password:");
-        String password = scanner.nextLine();
+        String password = scanner.next();
         if (userName.equals(admin.getUserName()) && password.equals(admin.getPassword())) {
             System.out.println("Welcome " + admin.getUserName() + "!");
             System.out.println("Chose your action:");
             System.out.println("1.users \t 2.games \t 3.back");
             switch (scanner.nextInt()) {
                 case 1:
-                    //UsersPage();
+                    // UsersPage();
                     break;
                 case 2:
                     GamesPage();
@@ -99,7 +94,6 @@ public class Main {
     }
 
     public static void GamesPage() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Chose your action:");
         System.out.println("1.new game \t 2.change game info \t 3.delete game");
         switch (scanner.nextInt()) {
@@ -110,7 +104,7 @@ public class Main {
                 FindGame();
                 break;
             case 3:
-                //DeleteGame();
+                // DeleteGame();
                 break;
             case 4:
                 Admin();
@@ -122,32 +116,36 @@ public class Main {
     }
 
     private static void FindGame() {
-        List<Game> games = new ArrayList<>();
-        Scanner scanner = new Scanner(System.in);
+        List<Game> gamesfound = new ArrayList<>();
         System.out.println("Enter game name:");
-        String gameName = scanner.nextLine();
+        String gameName = scanner.next();
         for (Game game : GameList) {
             if (gameName.equals(game.getName())) {
-                games.add(game);
+                gamesfound.add(game);
             }
         }
-        System.out.println("Games found:");
-        for (int i = 1; i <= games.size(); i++) {
-            System.out.println(i + "." + games.get(i));
+        if (gamesfound.isEmpty()) {
+            System.out.println("No games found! Please try again.");
+            FindGame();
+        } else {
+            System.out.println("Games found:");
+            for (int i = 0; i < gamesfound.size(); i++) {
+                System.out.println(i+1 + "." + gamesfound.get(i));
+            }
+            System.out.println("Witch one you wish to change?(Enter the number)");
+            int num = scanner.nextInt();
+            ChangeGameInfo(gamesfound.get(num-1));
         }
-        System.out.println("Witch one you wish to change?(Enter the number)");
-        int num = scanner.nextInt();
-        ChangeGameInfo(games.get(num));
     }
 
     public static void ChangeGameInfo(Game game) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Witch Info you wish to change:\n 1.Game name" +
                 " \t 2.Game description \t 3.Game genre \t 4.Game price \t 5.back");
         switch (scanner.nextInt()) {
             case 1:
                 System.out.println("Enter new Game name:");
-                game.setName(scanner.nextLine());
+                String newName=scanner.next();
+                game.setName(newName);
                 ChangeGameInfo(game);
                 break;
             case 2:
@@ -157,7 +155,7 @@ public class Main {
                 break;
             case 3:
                 System.out.println("Enter new Game genre:");
-                game.setGenre(scanner.nextLine());
+                game.setGenre(scanner.next());
                 ChangeGameInfo(game);
                 break;
             case 4:
@@ -173,13 +171,12 @@ public class Main {
 
     public static void AddNewGame() {
         Game game = new Game();
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter new game name:");
-        game.setName(scanner.nextLine());
+        game.setName(scanner.next());
         System.out.println("Enter new game Info:");
-        game.setDescription(scanner.nextLine());
+        game.setDescription(scanner.next());
         System.out.println("Enter new game genre:");
-        game.setGenre(scanner.nextLine());
+        game.setGenre(scanner.next());
         System.out.println("Enter new game Price:");
         game.setPrice(scanner.nextInt());
         GameList.add(game);
@@ -191,8 +188,7 @@ public class Main {
 
     public static String UserNameCheck() {
         System.out.println("Enter you UserName:");
-        Scanner scanner = new Scanner(System.in);
-        String name = scanner.nextLine();
+        String name = scanner.next();
         for (User user : UsersList) {
             if (name.equals(user.getUserName())) {
                 System.out.println("UserName already exist, please try again.");
@@ -203,9 +199,9 @@ public class Main {
     }
 
     public static String UserPasswordCheck() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter you Password:(Should include at least 8 chars with Capital and Small letters and Numbers)");
-        String password = scanner.nextLine();
+        System.out.println(
+                "Enter you Password:(Should include at least 8 chars with Capital and Small letters and Numbers)");
+        String password = scanner.next();
         if (!password.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
             System.out.println("Password is not acceptable. Please try again.");
             return UserPasswordCheck();
@@ -216,7 +212,6 @@ public class Main {
 
     public static void UserExistence(String userName) {
         boolean existence = false;
-        Scanner scanner = new Scanner(System.in);
         for (User user : UsersList) {
             if (user.getUserName().equals(userName)) {
                 existence = true;
@@ -234,9 +229,8 @@ public class Main {
     }
 
     public static void CorrectPass(String userName) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter you Password:");
-        String password = scanner.nextLine();
+        String password = scanner.next();
         boolean done = false;
         for (User user : UsersList) {
             if (user.getUserName().equals(userName) && user.getPassword().equals(password)) {
@@ -260,7 +254,6 @@ public class Main {
     public static void Profile(User user) {
         System.out.println("This is your Profile");
         System.out.println("1.ShowInfo \t 2.back");
-        Scanner scanner = new Scanner(System.in);
         int cmd = scanner.nextInt();
         switch (cmd) {
             case 1:
@@ -273,7 +266,6 @@ public class Main {
     }
 
     public static void ShowUserInfo(User user) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("User Information");
         System.out.println("UserName: " + user.getUserName());
         System.out.println("Password: " + user.getPassword());
@@ -292,28 +284,27 @@ public class Main {
     }
 
     public static void ChangeUserInfo(User user) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Witch data you wish to change?");
         System.out.println("1.UserName \t 2.Password \t 3.Email \t 4.PhoneNumber \t 5.Wallet \t 6.back");
         switch (scanner.nextInt()) {
             case 1:
                 System.out.println("Enter new UserName:");
-                user.setUserName(scanner.nextLine());
+                user.setUserName(scanner.next());
                 ChangeUserInfo(user);
                 break;
             case 2:
                 System.out.println("Enter new Password:");
-                user.setPassword(scanner.nextLine());
+                user.setPassword(scanner.next());
                 ChangeUserInfo(user);
                 break;
             case 3:
                 System.out.println("Enter new Email:");
-                user.setEmail(scanner.nextLine());
+                user.setEmail(scanner.next());
                 ChangeUserInfo(user);
                 break;
             case 4:
                 System.out.println("Enter new PhoneNumber:");
-                user.setPhone(scanner.nextLine());
+                user.setPhone(scanner.next());
                 ChangeUserInfo(user);
                 break;
             case 5:
@@ -337,13 +328,13 @@ public class Main {
                 Profile(user);
                 break;
             case 2:
-                //Store();
+                // Store();
                 break;
             case 3:
-                //Library();
+                // Library();
                 break;
             case 4:
-                //Friends();
+                // Friends();
                 break;
             case 5:
                 User();
