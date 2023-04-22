@@ -10,7 +10,8 @@ public class Main {
     final private static Admin admin = new Admin("name", "password");
     private static List<User> UsersList = new ArrayList<>();
     private static List<Game> GameList = new ArrayList<>();
-    public static Scanner scanner= new Scanner(System.in);
+    public static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         Enter();
     }
@@ -77,7 +78,7 @@ public class Main {
             System.out.println("1.users \t 2.games \t 3.back");
             switch (scanner.nextInt()) {
                 case 1:
-                    // UsersPage();
+                    //UsersPage();
                     break;
                 case 2:
                     GamesPage();
@@ -93,6 +94,9 @@ public class Main {
 
     }
 
+    //    public static void UsersPage(){
+//
+//    }
     public static void GamesPage() {
         System.out.println("Chose your action:");
         System.out.println("1.new game \t 2.change game info \t 3.delete game");
@@ -101,40 +105,44 @@ public class Main {
                 AddNewGame();
                 break;
             case 2:
-                FindGame();
+                ChangeGameInfo(FindGame());
                 break;
             case 3:
-                // DeleteGame();
+                DeleteGame(FindGame());
                 break;
             case 4:
                 Admin();
                 break;
         }
-        for (Game game : GameList) {
-            System.out.println("");
+    }
+    public static void DeleteGame(Game game) {
+        GameList.remove(game);
+        System.out.println("Game deleted successfully. \n1.back");
+        if(scanner.nextInt()==1){
+            GamesPage();
         }
     }
 
-    private static void FindGame() {
-        List<Game> gamesfound = new ArrayList<>();
+    private static Game FindGame() {
+        List<Game> gamesFound = new ArrayList<>();
         System.out.println("Enter game name:");
         String gameName = scanner.next();
         for (Game game : GameList) {
             if (gameName.equals(game.getName())) {
-                gamesfound.add(game);
+                gamesFound.add(game);
             }
         }
-        if (gamesfound.isEmpty()) {
+        if (gamesFound.isEmpty()) {
             System.out.println("No games found! Please try again.");
-            FindGame();
+            return FindGame();
         } else {
             System.out.println("Games found:");
-            for (int i = 0; i < gamesfound.size(); i++) {
-                System.out.println(i+1 + "." + gamesfound.get(i));
+            for (int i = 0; i < gamesFound.size(); i++) {
+                System.out.println(i + 1 + "." + gamesFound.get(i).getName() + ": " + gamesFound.get(i).getInfo());
             }
-            System.out.println("Witch one you wish to change?(Enter the number)");
+            System.out.println("Witch one is your target?(Enter the number)");
             int num = scanner.nextInt();
-            ChangeGameInfo(gamesfound.get(num-1));
+            return gamesFound.get(num - 1);
         }
     }
 
@@ -144,13 +152,13 @@ public class Main {
         switch (scanner.nextInt()) {
             case 1:
                 System.out.println("Enter new Game name:");
-                String newName=scanner.next();
+                String newName = scanner.next();
                 game.setName(newName);
                 ChangeGameInfo(game);
                 break;
             case 2:
                 System.out.println("Enter new Game description:");
-                game.setDescription(scanner.nextLine());
+                game.setDescription(scanner.next());
                 ChangeGameInfo(game);
                 break;
             case 3:
