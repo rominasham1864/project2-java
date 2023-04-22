@@ -11,6 +11,7 @@ public class Main {
     private static List<User> UsersList = new ArrayList<>();
     private static List<Game> GameList = new ArrayList<>();
     public static Scanner scanner = new Scanner(System.in);
+    private static boolean Admin = false;
 
     public static void main(String[] args) {
         Enter();
@@ -32,6 +33,7 @@ public class Main {
     }
 
     public static void User() {
+        Admin = false;
         System.out.println("Chose one:");
         System.out.println("1.Sing in \t 2.Sing up \t 3.Back");
         int enter = scanner.nextInt();
@@ -47,38 +49,19 @@ public class Main {
 
     }
 
-    public static void SingIn() {
-        System.out.println("Enter you UserName:");
-        String userName = scanner.next();
-        UserExistence(userName);
-        CorrectPass(userName);
-    }
-
-    public static void SingUp() {
-        String name = UserNameCheck();
-        String password = UserPasswordCheck();
-        System.out.println("Enter you Email Address:");
-        String email = scanner.next();
-        System.out.println("Enter you Phone Number:");
-        String phone = scanner.next();
-        User user = new User(name, password, email, phone);
-        UsersList.add(user);
-        System.out.println("Your info had successfully add to data base, Please Sing in.");
-        SingIn();
-    }
-
     public static void Admin() {
         System.out.println("Enter you UserName:");
         String userName = scanner.next();
         System.out.println("Enter you Password:");
         String password = scanner.next();
         if (userName.equals(admin.getUserName()) && password.equals(admin.getPassword())) {
+            Admin = true;
             System.out.println("Welcome " + admin.getUserName() + "!");
             System.out.println("Chose your action:");
             System.out.println("1.users \t 2.games \t 3.back");
             switch (scanner.nextInt()) {
                 case 1:
-                    //UsersPage();
+                    UsersPageAdmin();
                     break;
                 case 2:
                     GamesPage();
@@ -94,12 +77,136 @@ public class Main {
 
     }
 
-    //    public static void UsersPage(){
-//
-//    }
+    public static void UsersPageAdmin() {
+        System.out.println("Chose your action: \n 1.Users info \t 2.New user \t 3.Delete user \t 4.back");
+        switch (scanner.nextInt()) {
+            case 1:
+                ShowUserInfo(FindUser());
+                break;
+            case 2:
+                SingUp();
+                break;
+            case 3:
+                DeleteUser(FindUser());
+                break;
+            case 4:
+                Admin();
+                break;
+        }
+    }
+
+    public static void SingIn() {
+        System.out.println("Enter UserName:");
+        String userName = scanner.next();
+        UserExistence(userName);
+        CorrectPass(userName);
+    }
+
+    public static void SingUp() {
+        String name = UserNameCheck();
+        String password = UserPasswordCheck();
+        System.out.println("Enter Email Address:");
+        String email = scanner.next();
+        System.out.println("Enter Phone Number:");
+        String phone = scanner.next();
+        User user = new User(name, password, email, phone);
+        UsersList.add(user);
+        System.out.println("Info had successfully add to data base.");
+        if (Admin) {
+            UsersPageAdmin();
+        } else {
+            User();
+        }
+    }
+
+    public static User FindUser() {
+        System.out.println("How would you like to fine user? \n 1.UserName \t 2.Email \t 3.PhoneNumber");
+        switch (scanner.nextInt()) {
+            case 1:
+                return FindUserByName();
+            case 2:
+                return FindUserByEmail();
+            default:
+                return FindUserByPhone();
+        }
+    }
+
+    public static void DeleteUser(User user) {
+        UsersList.remove(user);
+    }
+
+    public static User FindUserByEmail() {
+        List<User> usersFound = new ArrayList<>();
+        System.out.println("Enter email:");
+        String email = scanner.next();
+        for (User user : UsersList) {
+            if (email.equals(user.getEmail())) {
+                usersFound.add(user);
+            }
+        }
+        if (usersFound.isEmpty()) {
+            System.out.println("No users found! Please try again.");
+            return FindUser();
+        } else {
+            System.out.println("Users found:");
+            for (int i = 0; i < usersFound.size(); i++) {
+                System.out.println(i + 1 + "." + usersFound.get(i).getEmail() + ": " + usersFound.get(i).getUserName());
+            }
+            System.out.println("Witch one is your target?(Enter the number)");
+            int num = scanner.nextInt();
+            return usersFound.get(num - 1);
+        }
+    }
+
+    public static User FindUserByPhone() {
+        List<User> usersFound = new ArrayList<>();
+        System.out.println("Enter phoneNumber:");
+        String phoneNumber = scanner.next();
+        for (User user : UsersList) {
+            if (phoneNumber.equals(user.getPhone())) {
+                usersFound.add(user);
+            }
+        }
+        if (usersFound.isEmpty()) {
+            System.out.println("No users found! Please try again.");
+            return FindUser();
+        } else {
+            System.out.println("Users found:");
+            for (int i = 0; i < usersFound.size(); i++) {
+                System.out.println(i + 1 + "." + usersFound.get(i).getPhone() + ": " + usersFound.get(i).getUserName());
+            }
+            System.out.println("Witch one is your target?(Enter the number)");
+            int num = scanner.nextInt();
+            return usersFound.get(num - 1);
+        }
+    }
+
+    public static User FindUserByName() {
+        List<User> usersFound = new ArrayList<>();
+        System.out.println("Enter user name:");
+        String userName = scanner.next();
+        for (User user : UsersList) {
+            if (userName.equals(user.getUserName())) {
+                usersFound.add(user);
+            }
+        }
+        if (usersFound.isEmpty()) {
+            System.out.println("No users found! Please try again.");
+            return FindUser();
+        } else {
+            System.out.println("Users found:");
+            for (int i = 0; i < usersFound.size(); i++) {
+                System.out.println(i + 1 + "." + usersFound.get(i).getUserName() + ": " + usersFound.get(i).getEmail());
+            }
+            System.out.println("Witch one is your target?(Enter the number)");
+            int num = scanner.nextInt();
+            return usersFound.get(num - 1);
+        }
+    }
+
     public static void GamesPage() {
         System.out.println("Chose your action:");
-        System.out.println("1.new game \t 2.change game info \t 3.delete game");
+        System.out.println("1.new game \t 2.change game info \t 3.delete game \t 4.back");
         switch (scanner.nextInt()) {
             case 1:
                 AddNewGame();
@@ -115,10 +222,11 @@ public class Main {
                 break;
         }
     }
+
     public static void DeleteGame(Game game) {
         GameList.remove(game);
         System.out.println("Game deleted successfully. \n1.back");
-        if(scanner.nextInt()==1){
+        if (scanner.nextInt() == 1) {
             GamesPage();
         }
     }
@@ -195,7 +303,7 @@ public class Main {
     }
 
     public static String UserNameCheck() {
-        System.out.println("Enter you UserName:");
+        System.out.println("Enter UserName:");
         String name = scanner.next();
         for (User user : UsersList) {
             if (name.equals(user.getUserName())) {
@@ -208,7 +316,7 @@ public class Main {
 
     public static String UserPasswordCheck() {
         System.out.println(
-                "Enter you Password:(Should include at least 8 chars with Capital and Small letters and Numbers)");
+                "Enter Password:(Should include at least 8 chars with Capital and Small letters and Numbers)");
         String password = scanner.next();
         if (!password.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
             System.out.println("Password is not acceptable. Please try again.");
@@ -261,15 +369,12 @@ public class Main {
 
     public static void Profile(User user) {
         System.out.println("This is your Profile");
-        System.out.println("1.ShowInfo \t 2.back");
-        int cmd = scanner.nextInt();
-        switch (cmd) {
-            case 1:
-                ShowUserInfo(user);
-                break;
-            case 2:
-                Profile(user);
-                break;
+        ShowUserInfo(user);
+        System.out.println("1.Change info \t 2.back");
+        if(scanner.nextInt()==1){
+            ChangeUserInfo(user);
+        }else {
+            UserPage(user);
         }
     }
 
@@ -286,6 +391,10 @@ public class Main {
                 ChangeUserInfo(user);
                 break;
             case 2:
+                if (Admin) {
+                    UsersPageAdmin();
+                }
+
                 Profile(user);
                 break;
         }
