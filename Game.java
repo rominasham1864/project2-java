@@ -1,13 +1,29 @@
 package ir.ac.kntu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Game {
     private String Name;
     private String Description;
     private String Genre;
     private int Price;
     private int Rate=0;
-    public Game(){
+    private List<String> Community= new ArrayList<>();
 
+    public String getDescription() {
+        return Description;
+    }
+
+    public List<String> getCommunity() {
+        return Community;
+    }
+
+    public void setCommunity(List<String> community) {
+        Community = community;
+    }
+
+    public Game(){
     }
     public Game(String name, String description, String genre, int price, int rate) {
         Name = name;

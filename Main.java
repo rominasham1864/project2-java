@@ -14,8 +14,11 @@ public class Main {
     private static boolean Admin = false;
 
     public static void main(String[] args) {
-        UsersList.add(new User("r", "Romi123", "4", "5"));
-        GameList.add(new Game("me", "me", "me", 12, 12));
+        User user=new User("r", "Romi123", "4", "5");
+        Game game = new Game("me", "me", "me", 12, 12);
+        UsersList.add(user);
+        GameList.add(game);
+        user.setLibrary(GameList);
         Enter();
     }
 
@@ -43,10 +46,6 @@ public class Main {
             case 1 -> SingIn();
             case 2 -> SingUp();
             case 3 -> Enter();
-            default -> {
-                System.out.println("Please try again;");
-                User();
-            }
         }
 
     }
@@ -361,12 +360,12 @@ public class Main {
             }
         }
         if (!done) {
-            System.out.println("Wrong Password Please try again.Press 1 for retry and 2 for exit:");
+            System.out.println("Wrong Password Please try again.Press 1 for retry and 0 for exit:");
             int cmd = scanner.nextInt();
-            if (cmd == 2) {
+            if (cmd == 1) {
                 CorrectPass(userName);
             } else {
-                SingIn();
+                Enter();
             }
         }
     }
@@ -445,7 +444,7 @@ public class Main {
                 Store(user);
                 break;
             case 3:
-                // Library();
+                Library(user);
                 break;
             case 4:
                 // Friends();
@@ -457,6 +456,68 @@ public class Main {
         }
     }
 
+    public static void Library(User user) {
+        List<Game> gamesList;
+        gamesList = user.getLibrary();
+        System.out.println("Your Games are:");
+        for (int i = 0; i < gamesList.size(); i++) {
+            System.out.println(i + 1 + "." + gamesList.get(i).getName());
+        }
+        System.out.println("Chose one to show information:(0.back)");
+        int cmd = scanner.nextInt();
+        if (cmd == 0) {
+            UserPage(user);
+        } else {
+            GameLibrary(gamesList.get(cmd - 1), user);
+        }
+    }
+
+    public static void GameLibrary(Game game, User user) {
+        System.out.println("Name: " + game.getName() + "\nDescription: " + game.getInfo() +
+                "\nGenre: " + game.getGenre() + "\nPrice: " + game.getPrice() + "\nRate: " + game.getRate() + "\n1.Community \t 2.Rating \t 3.back");
+        switch (scanner.nextInt()) {
+            case 1:
+                GetCommunity(game, user);
+                break;
+            case 2:
+                //GameRating();
+                break;
+            case 3:
+                Library(user);
+                break;
+        }
+
+    }
+
+    public static void GetCommunity(Game game, User user) {
+        List<String> community = game.getCommunity();
+        for (int i = 0; i < community.size(); i++) {
+            System.out.println(i + 1 + "." + community.get(i));
+        }
+        System.out.println("0.back \t 1.Add comment");
+        switch (scanner.nextInt()) {
+            case 0:
+                GameLibrary(game, user);
+                break;
+            case 1:
+                SetCommunity(game, user);
+                break;
+        }
+    }
+
+    public static void SetCommunity(Game game, User user) {
+        List<String> community = game.getCommunity();
+        System.out.print("Add your comment:\n");
+        scanner.nextLine();
+        String newComment = scanner.nextLine();
+        community.add(newComment);
+        game.setCommunity(community);
+        System.out.println("Comment added!\n0.back");
+        if (scanner.nextInt() == 0) {
+            GetCommunity(game, user);
+        }
+    }
+
     public static void Store(User user) {
         System.out.println("Games available are:");
         for (int i = 0; i < GameList.size(); i++) {
@@ -464,7 +525,7 @@ public class Main {
         }
         System.out.println("0.back");
         System.out.println("Chose your game:");
-        int cmd=scanner.nextInt();
+        int cmd = scanner.nextInt();
         if (cmd == 0) {
             UserPage(user);
         } else {
