@@ -8,7 +8,21 @@ public class Game {
     private String Description;
     private String Genre;
     private int Price;
-    private int Rate=0;
+    private double Avrage=0;
+    private int rateCount=0;
+
+    public void setAvrage(double avrage) {
+        Avrage = avrage;
+    }
+
+    public int getRateCount() {
+        return rateCount;
+    }
+
+    public void setRateCount(int rateCount) {
+        this.rateCount = rateCount;
+    }
+
     private List<String> Community= new ArrayList<>();
 
     public String getDescription() {
@@ -25,12 +39,12 @@ public class Game {
 
     public Game(){
     }
-    public Game(String name, String description, String genre, int price, int rate) {
+    public Game(String name, String description, String genre, int price, int avrage) {
         Name = name;
         Description = description;
         Genre = genre;
         Price = price;
-        Rate = rate;
+        Avrage = avrage;
     }
 
     public String getName() {
@@ -65,11 +79,7 @@ public class Game {
         Price = price;
     }
 
-    public int getRate() {
-        return Rate;
-    }
-
-    public void setRate(int rate) {
-        Rate = rate;
+    public double getAvrage() {
+        return Avrage;
     }
 }

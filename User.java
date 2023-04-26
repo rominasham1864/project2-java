@@ -11,6 +11,15 @@ public class User {
     private String Phone;
     private int Wallet = 0;
     private List<Game> library= new ArrayList<Game>();
+    private List<Game> rating = new ArrayList<>();
+
+    public List<Game> getRating() {
+        return rating;
+    }
+
+    public void setRating(List<Game> rating) {
+        this.rating = rating;
+    }
 
     public void setLibrary(List<Game> library) {
         this.library = library;

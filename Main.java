@@ -1,10 +1,7 @@
 
 package ir.ac.kntu;
 
-import java.awt.font.GlyphMetrics;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     final private static Admin admin = new Admin("r", "r");
@@ -12,10 +9,12 @@ public class Main {
     private static List<Game> GameList = new ArrayList<>();
     public static Scanner scanner = new Scanner(System.in);
     private static boolean Admin = false;
+    private static Map<Game, Map<User, Double>> outermap = new HashMap<Game, Map<User, Double>>();
+    private static Map<User, Double> inermap = new HashMap<User, Double>();
 
     public static void main(String[] args) {
-        User user=new User("r", "Romi123", "4", "5");
-        Game game = new Game("me", "me", "me", 12, 12);
+        User user = new User("r", "Romi123", "4", "5");
+        Game game = new Game("me", "me", "me", 12, 0);
         UsersList.add(user);
         GameList.add(game);
         user.setLibrary(GameList);
@@ -40,7 +39,7 @@ public class Main {
     public static void User() {
         Admin = false;
         System.out.println("Chose one:");
-        System.out.println("1.Sing in \t 2.Sing up \t 3.Back");
+        System.out.println("1.Sign in \t 2.Sign up \t 3.Back");
         int enter = scanner.nextInt();
         switch (enter) {
             case 1 -> SingIn();
@@ -468,19 +467,20 @@ public class Main {
         if (cmd == 0) {
             UserPage(user);
         } else {
-            GameLibrary(gamesList.get(cmd - 1), user);
+            UserGameInfo(gamesList.get(cmd - 1), user);
         }
     }
 
-    public static void GameLibrary(Game game, User user) {
+    public static void UserGameInfo(Game game, User user) {
         System.out.println("Name: " + game.getName() + "\nDescription: " + game.getInfo() +
-                "\nGenre: " + game.getGenre() + "\nPrice: " + game.getPrice() + "\nRate: " + game.getRate() + "\n1.Community \t 2.Rating \t 3.back");
+                "\nGenre: " + game.getGenre() + "\nPrice: " + game.getPrice() + "\nRate: " + game.getAvrage()
+                + "\n1.Community \t 2.Rating \t 3.back");
         switch (scanner.nextInt()) {
             case 1:
                 GetCommunity(game, user);
                 break;
             case 2:
-                //GameRating();
+                GetGameRate(game, user, outermap);
                 break;
             case 3:
                 Library(user);
@@ -491,13 +491,14 @@ public class Main {
 
     public static void GetCommunity(Game game, User user) {
         List<String> community = game.getCommunity();
+        System.out.println("Comments on this game:");
         for (int i = 0; i < community.size(); i++) {
             System.out.println(i + 1 + "." + community.get(i));
         }
         System.out.println("0.back \t 1.Add comment");
         switch (scanner.nextInt()) {
             case 0:
-                GameLibrary(game, user);
+                ShowGameInfo(game, user);
                 break;
             case 1:
                 SetCommunity(game, user);
@@ -518,6 +519,57 @@ public class Main {
         }
     }
 
+    public static void ChangeGameRate(Game game, User user, Map inermap) {
+        System.out.println("Enter your new rate for 0 to 10");
+        double oldRate = (double) inermap.get(user);
+        double sum = game.getAvrage();
+        sum -= oldRate;
+        scanner.nextLine();
+        sum += (double) scanner.nextInt();
+        game.setAvrage(sum / game.getRateCount());
+        System.out.println("Your rating have gone successfully!\n0.back");
+        if (scanner.nextInt() == 0) {
+            System.out.println("hora");
+            // GetGameRate(game, user, map);
+        }
+    }
+
+    public static void GetGameRate(Game game, User user, Map map) {
+        System.out.println(game.getName() + "'s rate is: " + game.getAvrage() + ".\n 0.back \t 1.Rate game");
+        switch (scanner.nextInt()) {
+            case 1:
+                if (map.containsKey(game)) {
+                    Map<User, Double> inermap = (Map<User, Double>) map.get(game);
+                    if (inermap.containsKey(user)) {
+                        System.out.println("You've already rate this game. Do you wanna rate again?\n1.Yes \t 2.No");
+                        switch (scanner.nextInt()) {
+                            case 1:
+                                ChangeGameRate(game, user, inermap);
+                            case 2:
+                                GetGameRate(game, user, map);
+                        }
+                    }
+                } else {
+                    System.out.println("Enter your new rate for 0 to 10");
+                    double newRate= scanner.nextDouble();
+                    int count =game.getRateCount();
+                    count++;
+                    game.setRateCount(count);
+                    double sum = game.getRateCount()*game.getAvrage();
+                    sum+=newRate;
+                    game.setAvrage(sum/count);
+                    outermap.get(inermap.put(user, newRate));System.out.println("Your rating have gone successfully!\n0.back");
+                    if (scanner.nextInt() == 0) {
+                        UserGameInfo(game, user);
+                    }
+                }
+                break;
+            case 2:
+                UserGameInfo(game, user);
+                break;
+        }
+    }
+
     public static void Store(User user) {
         System.out.println("Games available are:");
         for (int i = 0; i < GameList.size(); i++) {
@@ -535,7 +587,7 @@ public class Main {
 
     public static void ShowGameInfo(Game game, User user) {
         System.out.println("Name: " + game.getName() + "\nDescription: " + game.getInfo() +
-                "\nGenre: " + game.getGenre() + "\nPrice: " + game.getPrice() + "\nRate: " + game.getRate());
+                "\nGenre: " + game.getGenre() + "\nPrice: " + game.getPrice() + "\nRate: " + game.getAvrage());
         CheckLibrary(game, user);
     }
 

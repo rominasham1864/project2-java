@@ -1,28 +1,56 @@
 package ir.ac.kntu;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class test {
+    public static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner scanner =new Scanner(System.in);
-        User user = new User("", "", "", "");
-        Game game = new Game("me", "me", "me", 12, 12);
-        List<Game> gamesList;
-        gamesList = user.getLibrary();
-        gamesList.add(game);
-        System.out.println("Your Games are:");
-        for (int i = 0; i < gamesList.size(); i++) {
-            System.out.println(i + 1 + "." + gamesList.get(i).getName());
+        User user = new User("m", "m", "m", "m");
+        Map<Game, Map<User, Double>> outermap = new HashMap<Game, Map<User, Double>>();
+        Map<User, Double> inermap = new HashMap<User, Double>();
+        Game game = new Game("me", "me", "me", 12, 0);
+        inermap.put(user, 12.0);
+        outermap.put(game, inermap);
+        GetGameRate(game, user, outermap);
+
+    }
+
+    public static void SetGameRate(Game game, User user, Map inermap) {
+        System.out.println("Enter your new rate for 0 to 10");
+        double oldRate = (double) inermap.get(user);
+        double sum = game.getAvrage();
+        sum -= oldRate;
+        sum += scanner.nextDouble();
+        game.setAvrage(sum / game.getRateCount());
+        System.out.println("Your rating have gone successfully!\n0.back");
+        if (scanner.nextInt() == 0) {
+            System.out.println("hora");
+            //GetGameRate(game, user, map);
         }
-        System.out.println("Chose one to show information:(0.back)");
-        int cmd = scanner.nextInt();
-        if (cmd == 0) {
-            //UserPage(user);
-            System.out.println("d");
-        } else {
-            //GameLibrary(gamesList.get(scanner.nextInt() - 1), user);
-            System.out.println("me");
+    }
+
+    public static void GetGameRate(Game game, User user, Map map) {
+        System.out.println(game.getName() + "'s rate is: " + game.getAvrage() + ".\n 0.back \t 1.Rate game");
+        switch (scanner.nextInt()) {
+            case 1:
+                if (map.containsKey(game)) {
+                    Map<User, Double> inermap = (Map<User, Double>) map.get(game);
+                    if (inermap.containsKey(user)) {
+                        System.out.println("You've already rate this game. Do you wanna rate again?\n1.Yes \t 2.No");
+                        switch (scanner.nextInt()) {
+                            case 1:
+                                SetGameRate(game, user, inermap);
+                            case 2:
+                                GetGameRate(game, user, map);
+                        }
+                    } else {
+                        SetGameRate(game, user, inermap);
+                    }
+                }
         }
     }
 }
