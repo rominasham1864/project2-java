@@ -15,15 +15,15 @@ public class Main {
     private static Map<User, ArrayList<User>> Resquests = new HashMap<>();
 
     public static void main(String[] args) {
-        User user = new User("r", "Romi123", "4", "5");
-        ArrayList<User> requests= new ArrayList<>();
-        Resquests.put(user, requests);
-        ArrayList<User> friends= new ArrayList<>();
-        Friends.put(user, friends);
-        Game game = new Game("me", "me", "me", 12, 0);
-        UsersList.add(user);
-        GameList.add(game);
-        user.setLibrary(GameList);
+//        User user = new User("r", "Romi123", "4", "5");
+//        ArrayList<User> requests = new ArrayList<>();
+//        Resquests.put(user, requests);
+//        ArrayList<User> friends = new ArrayList<>();
+//        Friends.put(user, friends);
+//        Game game = new Game("me", "me", "me", 12, 0);
+//        UsersList.add(user);
+//        GameList.add(game);
+//        user.setLibrary(GameList);
         Enter();
     }
 
@@ -117,7 +117,7 @@ public class Main {
         String phone = scanner.next();
         User user = new User(name, password, email, phone);
         UsersList.add(user);
-        ArrayList<User> requests=new ArrayList<>();
+        ArrayList<User> requests = new ArrayList<>();
         Friends.put(user, requests);
         System.out.println("Info had successfully add to data base.");
         if (Admin) {
@@ -650,10 +650,10 @@ public class Main {
                     Friends(user);
                 } else {
                     ArrayList<User> requests = new ArrayList<>();
-                    Resquests.put(user, requests);
+                    Resquests.put(newfriend, requests);
                     System.out.println("Would you like to send a friendship request to this user?\n1.Yes 2.No");
                     if (scanner.nextInt() == 1) {
-                        Resquests.get(user).add(newfriend);
+                        Resquests.get(newfriend).add(user);
                         System.out.println("Request sent successfully! waite for their respond...");
                         UserPage(user);
                     }
@@ -677,19 +677,32 @@ public class Main {
             }
         } else {
             System.out.println("Your new Requests are:");
-            for (int i = 0; i < Resquests.size(); i++) {
+            for (int i = 0; i < Resquests.get(user).size(); i++) {
                 System.out.println(i + 1 + "." + Resquests.get(user).get(i).getUserName());
             }
-            System.out.println("Witch one you wish to accept: (0.back)");
-            int cmd =scanner.nextInt();
-            if(cmd==0){
+            System.out.println("Chose one: (0.back)");
+            int cmd = scanner.nextInt();
+            if (cmd == 0) {
                 Friends(user);
             } else {
-                User newFriend= Resquests.get(user).get(cmd-1);
-                Friends.get(user).add(newFriend);
-                Resquests.get(user).remove(cmd-1);
-                System.out.println("Request accepted!");
-                ShowRequests(user);
+                User newFriend = Resquests.get(user).get(cmd - 1);
+                System.out.println("Would you like to add this user to your friends?\n0.back \t 1.Yes \t 2.No");
+                switch (scanner.nextInt()) {
+                    case 0:
+                        ShowRequests(user);
+                        break;
+                    case 1:
+                        Friends.get(user).add(newFriend);
+                        Resquests.get(user).remove(cmd - 1);
+                        System.out.println("Request accepted!");
+                        ShowRequests(user);
+                        break;
+                    case 2:
+                        Resquests.get(user).remove(cmd - 1);
+                        System.out.println("Request declined!");
+                        ShowRequests(user);
+                        break;
+                }
             }
         }
     }
@@ -712,8 +725,9 @@ public class Main {
                 Friends(user);
             }
         } else {
-            System.out.println("Chose one: (0.back)");
+            System.out.println("search for user name:");
             String search = scanner.next();
+            System.out.println("Chose one: (0.back)");
             for (int i = 0; i < Friends.get(user).size(); i++) {
                 if (Friends.get(user).get(i).getUserName().startsWith(search)) {
                     System.out.println(i + 1 + "." + Friends.get(user).get(i).getUserName());
