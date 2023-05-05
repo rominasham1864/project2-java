@@ -9,11 +9,17 @@ public class Main {
     private static List<Game> GameList = new ArrayList<>();
     public static Scanner scanner = new Scanner(System.in);
     private static boolean Admin = false;
-    private static Map<Game, Map<User, Double>> outermap = new HashMap<Game, Map<User, Double>>();
-    private static Map<User, Double> inermap = new HashMap<User, Double>();
+    private static Map<Game, Map<User, Double>> outermap = new HashMap<>();
+    private static Map<User, Double> inermap = new HashMap<>();
+    private static Map<User, ArrayList<User>> Friends = new HashMap<>();
+    private static Map<User, ArrayList<User>> Resquests = new HashMap<>();
 
     public static void main(String[] args) {
         User user = new User("r", "Romi123", "4", "5");
+        ArrayList<User> requests= new ArrayList<>();
+        Resquests.put(user, requests);
+        ArrayList<User> friends= new ArrayList<>();
+        Friends.put(user, friends);
         Game game = new Game("me", "me", "me", 12, 0);
         UsersList.add(user);
         GameList.add(game);
@@ -39,12 +45,12 @@ public class Main {
     public static void User() {
         Admin = false;
         System.out.println("Chose one:");
-        System.out.println("1.Sign in \t 2.Sign up \t 3.Back");
+        System.out.println("1.Sign in \t 2.Sign up \t 0.Back");
         int enter = scanner.nextInt();
         switch (enter) {
             case 1 -> SingIn();
             case 2 -> SingUp();
-            case 3 -> Enter();
+            case 0 -> Enter();
         }
 
     }
@@ -58,7 +64,7 @@ public class Main {
             Admin = true;
             System.out.println("Welcome " + admin.getUserName() + "!");
             System.out.println("Chose your action:");
-            System.out.println("1.users \t 2.games \t 3.back");
+            System.out.println("1.users \t 2.games \t 0.back");
             switch (scanner.nextInt()) {
                 case 1:
                     UsersPageAdmin();
@@ -66,7 +72,7 @@ public class Main {
                 case 2:
                     GamesPage();
                     break;
-                case 3:
+                case 0:
                     Enter();
                     break;
             }
@@ -78,7 +84,7 @@ public class Main {
     }
 
     public static void UsersPageAdmin() {
-        System.out.println("Chose your action: \n 1.Users info \t 2.New user \t 3.Delete user \t 4.back");
+        System.out.println("Chose your action: \n 1.Users info \t 2.New user \t 3.Delete user \t 0.back");
         switch (scanner.nextInt()) {
             case 1:
                 ShowUserInfo(FindUser());
@@ -89,8 +95,8 @@ public class Main {
             case 3:
                 DeleteUser(FindUser());
                 break;
-            case 4:
-                Admin();
+            case 0:
+                Enter();
                 break;
         }
     }
@@ -111,6 +117,8 @@ public class Main {
         String phone = scanner.next();
         User user = new User(name, password, email, phone);
         UsersList.add(user);
+        ArrayList<User> requests=new ArrayList<>();
+        Friends.put(user, requests);
         System.out.println("Info had successfully add to data base.");
         if (Admin) {
             UsersPageAdmin();
@@ -120,7 +128,7 @@ public class Main {
     }
 
     public static User FindUser() {
-        System.out.println("How would you like to fine user? \n 1.UserName \t 2.Email \t 3.PhoneNumber");
+        System.out.println("How would you like to fine user? \n 1.UserName \t 2.Email \t 3.PhoneNumber \t 0.back");
         switch (scanner.nextInt()) {
             case 1:
                 return FindUserByName();
@@ -370,29 +378,33 @@ public class Main {
     }
 
     public static void Profile(User user) {
-        System.out.println("This is your Profile");
-        ShowUserInfo(user);
+        System.out.println("This is your Profile:");
+        System.out.println("UserName: " + user.getUserName());
+        System.out.println("Password: " + user.getPassword());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("PhoneNumber: " + user.getPhone());
+        System.out.println("Wallet: " + user.getWallet() + "\n");
         System.out.println("1.ChangeInfo \t 2.back");
         switch (scanner.nextInt()) {
             case 1:
                 ChangeUserInfo(user);
                 break;
             case 2:
-                if (Admin) {
-                    UsersPageAdmin();
-                }
                 UserPage(user);
                 break;
         }
     }
 
     public static void ShowUserInfo(User user) {
-        System.out.println("User Information");
+        System.out.println("User Information: (0.back)");
         System.out.println("UserName: " + user.getUserName());
         System.out.println("Password: " + user.getPassword());
         System.out.println("Email: " + user.getEmail());
         System.out.println("PhoneNumber: " + user.getPhone());
         System.out.println("Wallet: " + user.getWallet() + "\n");
+        if (scanner.nextInt() == 0) {
+            UsersPageAdmin();
+        }
     }
 
     public static void ChangeUserInfo(User user) {
@@ -433,7 +445,7 @@ public class Main {
 
     public static void UserPage(User user) {
         System.out.println("You are in Home Page:");
-        System.out.println("1.profile \t 2.store \t 3.library \t 4.friends \t 5.back");
+        System.out.println("1.profile \t 2.store \t 3.library \t 4.friends \t 0.back");
         int page = scanner.nextInt();
         switch (page) {
             case 1:
@@ -446,9 +458,9 @@ public class Main {
                 Library(user);
                 break;
             case 4:
-                // Friends();
+                Friends(user);
                 break;
-            case 5:
+            case 0:
                 User();
                 break;
 
@@ -551,14 +563,16 @@ public class Main {
                     }
                 } else {
                     System.out.println("Enter your new rate for 0 to 10");
-                    double newRate= scanner.nextDouble();
-                    int count =game.getRateCount();
+                    double newRate = scanner.nextDouble();
+                    int count = game.getRateCount();
                     count++;
                     game.setRateCount(count);
-                    double sum = game.getRateCount()*game.getAvrage();
-                    sum+=newRate;
-                    game.setAvrage(sum/count);
-                    outermap.get(inermap.put(user, newRate));System.out.println("Your rating have gone successfully!\n0.back");
+                    double sum = game.getRateCount() * game.getAvrage();
+                    sum += newRate;
+                    game.setAvrage(sum / count);
+                    inermap.put(user, newRate);
+                    outermap.put(game, inermap);
+                    System.out.println("Your rating have gone successfully!\n0.back");
                     if (scanner.nextInt() == 0) {
                         UserGameInfo(game, user);
                     }
@@ -617,6 +631,134 @@ public class Main {
         }
         if (scanner.nextInt() == 1) {
             Store(user);
+        }
+    }
+
+    private static void Friends(User user) {
+        System.out.println("1.Show friends \t 2.Search \t 3.Find friends \t 4.Your requests \t 0.back");
+        switch (scanner.nextInt()) {
+            case 1:
+                ShowFriendsList(user);
+                break;
+            case 2:
+                Search(user);
+                break;
+            case 3:
+                User newfriend = FindFriend();
+                if (newfriend == null) {
+                    System.out.println("User not found!");
+                    Friends(user);
+                } else {
+                    ArrayList<User> requests = new ArrayList<>();
+                    Resquests.put(user, requests);
+                    System.out.println("Would you like to send a friendship request to this user?\n1.Yes 2.No");
+                    if (scanner.nextInt() == 1) {
+                        Resquests.get(user).add(newfriend);
+                        System.out.println("Request sent successfully! waite for their respond...");
+                        UserPage(user);
+                    }
+                }
+                break;
+            case 4:
+                ShowRequests(user);
+                break;
+            case 0:
+                UserPage(user);
+                break;
+
+        }
+    }
+
+    private static void ShowRequests(User user) {
+        if (Resquests.get(user).isEmpty()) {
+            System.out.println("You have no requests! (0.back)");
+            if (scanner.nextInt() == 0) {
+                Friends(user);
+            }
+        } else {
+            System.out.println("Your new Requests are:");
+            for (int i = 0; i < Resquests.size(); i++) {
+                System.out.println(i + 1 + "." + Resquests.get(user).get(i).getUserName());
+            }
+            System.out.println("Witch one you wish to accept: (0.back)");
+            int cmd =scanner.nextInt();
+            if(cmd==0){
+                Friends(user);
+            } else {
+                User newFriend= Resquests.get(user).get(cmd-1);
+                Friends.get(user).add(newFriend);
+                Resquests.get(user).remove(cmd-1);
+                System.out.println("Request accepted!");
+                ShowRequests(user);
+            }
+        }
+    }
+
+    private static User FindFriend() {
+        System.out.println("Search for Username:");
+        String username = scanner.next();
+        for (User user1 : UsersList) {
+            if (user1.getUserName().equals(username)) {
+                return user1;
+            }
+        }
+        return null;
+    }
+
+    private static void Search(User user) {
+        if (Friends.get(user).isEmpty()) {
+            System.out.println("Currently you have no friend:)\n0.back");
+            if (scanner.nextInt() == 0) {
+                Friends(user);
+            }
+        } else {
+            System.out.println("Chose one: (0.back)");
+            String search = scanner.next();
+            for (int i = 0; i < Friends.get(user).size(); i++) {
+                if (Friends.get(user).get(i).getUserName().startsWith(search)) {
+                    System.out.println(i + 1 + "." + Friends.get(user).get(i).getUserName());
+                }
+            }
+            int cmd = scanner.nextInt();
+            if (cmd == 0) {
+                ShowFriendsList(user);
+            } else {
+                FriendLibrary(Friends.get(user).get(cmd), user);
+            }
+        }
+    }
+
+    private static void ShowFriendsList(User user) {
+        if (Friends.get(user).isEmpty()) {
+            System.out.println("Currently you have no friend:)\n0.back");
+            if (scanner.nextInt() == 0) {
+                Friends(user);
+            }
+        } else {
+            System.out.println("Your friends list, chose one:(0.back)");
+            for (int i = 0; i < Friends.get(user).size(); i++) {
+                System.out.println(i + 1 + "." + Friends.get(user).get(i).getUserName());
+            }
+            int cmd = scanner.nextInt();
+            if (cmd == 0) {
+                Friends(user);
+            } else {
+                User friend = Friends.get(user).get(cmd - 1);
+                FriendLibrary(friend, user);
+            }
+        }
+    }
+
+
+    private static void FriendLibrary(User friend, User user) {
+        List<Game> gamesList;
+        gamesList = friend.getLibrary();
+        System.out.println("Your friends games are:(0.back)");
+        for (int i = 0; i < gamesList.size(); i++) {
+            System.out.println(i + 1 + "." + gamesList.get(i).getName());
+        }
+        if (scanner.nextInt() == 0) {
+            Friends(user);
         }
     }
 }
